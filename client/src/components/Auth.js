@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
+
 import signinImage from "../assets/signup.jpg";
 
 const cookies = new Cookies();
+
 const initialState = {
   fullName: "",
   username: "",
@@ -12,29 +14,33 @@ const initialState = {
   phoneNumber: "",
   avatarURL: "",
 };
+
 const Auth = () => {
   const [form, setForm] = useState(initialState);
   const [isSignup, setIsSignup] = useState(true);
+
   const handleChange = (e) => {
-    // in suqaure bracket because this here is a syntax error,so we have to wrap the name of the specific key in square brackets.
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const switchMode = () => {
-    setIsSignup((previousIsSignup) => !previousIsSignup);
-  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { fullName, username, password, phoneNumber, avatarURL } = form;
-    const URL = "http://localhost:5000/auth";
+
+    const { username, password, phoneNumber, avatarURL } = form;
+
+    const URL = "https://localhost:5000/auth";
+    // const URL = 'https://medical-pager.herokuapp.com/auth';
+
     const {
-      data: { token, userId, hashedPassword },
-    } = await axios.post(`${URL}/${isSignup ? "signup" : "signin"}`, {
+      data: { token, userId, hashedPassword, fullName },
+    } = await axios.post(`${URL}/${isSignup ? "signup" : "login"}`, {
       username,
       password,
-      fullName,
+      fullName: form.fullName,
       phoneNumber,
       avatarURL,
     });
+
     cookies.set("token", token);
     cookies.set("username", username);
     cookies.set("fullName", fullName);
@@ -45,18 +51,23 @@ const Auth = () => {
       cookies.set("avatarURL", avatarURL);
       cookies.set("hashedPassword", hashedPassword);
     }
-    // we are reloading because, once we set the cokkies, the if (!authToken) return <Auth />; in line 17 in App.js, authToken will be filled this time and won't call <Auth /> and will go to <Chat />
+
     window.location.reload();
   };
+
+  const switchMode = () => {
+    setIsSignup((prevIsSignup) => !prevIsSignup);
+  };
+
   return (
     <div className="auth__form-container">
       <div className="auth__form-container_fields">
         <div className="auth__form-container_fields-content">
-          <p>{isSignup ? "sign up" : "sign in"}</p>
+          <p>{isSignup ? "Sign Up" : "Sign In"}</p>
           <form onSubmit={handleSubmit}>
             {isSignup && (
               <div className="auth__form-container_fields-content_input">
-                <label htmlFor="fullName"> Full Name</label>
+                <label htmlFor="fullName">Full Name</label>
                 <input
                   name="fullName"
                   type="text"
@@ -67,7 +78,7 @@ const Auth = () => {
               </div>
             )}
             <div className="auth__form-container_fields-content_input">
-              <label htmlFor="username"> Username</label>
+              <label htmlFor="username">Username</label>
               <input
                 name="username"
                 type="text"
@@ -78,7 +89,7 @@ const Auth = () => {
             </div>
             {isSignup && (
               <div className="auth__form-container_fields-content_input">
-                <label htmlFor="phoneNumber"> Phone Number</label>
+                <label htmlFor="phoneNumber">Phone Number</label>
                 <input
                   name="phoneNumber"
                   type="text"
@@ -90,7 +101,7 @@ const Auth = () => {
             )}
             {isSignup && (
               <div className="auth__form-container_fields-content_input">
-                <label htmlFor="avatarURL"> Avatar URL</label>
+                <label htmlFor="avatarURL">Avatar URL</label>
                 <input
                   name="avatarURL"
                   type="text"
@@ -100,9 +111,8 @@ const Auth = () => {
                 />
               </div>
             )}
-
             <div className="auth__form-container_fields-content_input">
-              <label htmlFor="password"> Password</label>
+              <label htmlFor="password">Password</label>
               <input
                 name="password"
                 type="password"
@@ -113,7 +123,7 @@ const Auth = () => {
             </div>
             {isSignup && (
               <div className="auth__form-container_fields-content_input">
-                <label htmlFor="confirmPassword"> Confirm Password</label>
+                <label htmlFor="confirmPassword">Confirm Password</label>
                 <input
                   name="confirmPassword"
                   type="password"
@@ -129,9 +139,9 @@ const Auth = () => {
           </form>
           <div className="auth__form-container_fields-account">
             <p>
-              {isSignup ? "Already have an account?" : "Dont have an account?"}
+              {isSignup ? "Already have an account?" : "Don't have an account?"}
               <span onClick={switchMode}>
-                {isSignup ? "Sign In" : "Sign UP"}
+                {isSignup ? "Sign In" : "Sign Up"}
               </span>
             </p>
           </div>
