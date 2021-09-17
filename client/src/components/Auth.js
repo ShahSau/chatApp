@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import signinImage from "../assets/signup.jpg";
+
+const cookies = new Cookies();
 const initialState = {
   fullName: "",
   username: "",
@@ -33,6 +35,18 @@ const Auth = () => {
       phoneNumber,
       avatarURL,
     });
+    cookies.set("token", token);
+    cookies.set("username", username);
+    cookies.set("fullName", fullName);
+    cookies.set("userId", userId);
+
+    if (isSignup) {
+      cookies.set("phoneNumber", phoneNumber);
+      cookies.set("avatarURL", avatarURL);
+      cookies.set("hashedPassword", hashedPassword);
+    }
+
+    window.location.reload();
   };
   return (
     <div className="auth__form-container">
