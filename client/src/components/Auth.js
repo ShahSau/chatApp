@@ -2,18 +2,44 @@ import React, { useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import signinImage from "../assets/signup.jpg";
+const initialState = {
+  fullName: "",
+  username: "",
+  password: "",
+  confirmPassword: "",
+  phoneNumber: "",
+  avatarURL: "",
+};
 const Auth = () => {
+  const [form, setForm] = useState(initialState);
   const [isSignup, setIsSignup] = useState(true);
-  const handleChange = () => {};
+  const handleChange = (e) => {
+    // in suqaure bracket because this here is a syntax error,so we have to wrap the name of the specific key in square brackets.
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
   const switchMode = () => {
     setIsSignup((previousIsSignup) => !previousIsSignup);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { fullName, username, password, phoneNumber, avatarURL } = form;
+    const URL = "http://localhost:5000/auth";
+    const {
+      data: { token, userId, hashedPassword },
+    } = await axios.post(`${URL}/${isSignup ? "signup" : "signin"}`, {
+      username,
+      password,
+      fullName,
+      phoneNumber,
+      avatarURL,
+    });
   };
   return (
     <div className="auth__form-container">
       <div className="auth__form-container_fields">
         <div className="auth__form-container_fields-content">
           <p>{isSignup ? "sign up" : "sign in"}</p>
-          <form onsubmit={() => {}}>
+          <form onSubmit={handleSubmit}>
             {isSignup && (
               <div className="auth__form-container_fields-content_input">
                 <label htmlFor="fullName"> Full Name</label>
@@ -27,9 +53,9 @@ const Auth = () => {
               </div>
             )}
             <div className="auth__form-container_fields-content_input">
-              <label htmlFor="fullName"> Username</label>
+              <label htmlFor="username"> Username</label>
               <input
-                name="Username"
+                name="username"
                 type="text"
                 placeholder="Username"
                 onChange={handleChange}
@@ -83,6 +109,9 @@ const Auth = () => {
                 />
               </div>
             )}
+            <div className="auth__form-container_fields-content_button">
+              <button>{isSignup ? "Sign Up" : "Sign In"}</button>
+            </div>
           </form>
           <div className="auth__form-container_fields-account">
             <p>
