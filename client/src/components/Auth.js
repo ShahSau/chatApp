@@ -45,7 +45,7 @@ const Auth = () => {
       cookies.set("avatarURL", avatarURL);
       cookies.set("hashedPassword", hashedPassword);
     }
-
+    // we are reloading because, once we set the cokkies, the if (!authToken) return <Auth />; in line 17 in App.js, authToken will be filled this time and won't call <Auth /> and will go to <Chat />
     window.location.reload();
   };
   return (
